@@ -48,9 +48,15 @@ async def classify_number(number: int = Query(..., description="Enter a valid in
         # Digit Sum
         digit_sum = sum(int(digit) for digit in str(number))
 
-        # Fetch Fun Fact
-        fun_fact_url = f"http://numbersapi.com/{number}"
-        fun_fact = requests.get(fun_fact_url).text
+        # Fetch Fun Fact (Only if NOT Armstrong)
+        fun_fact = requests.get(f"http://numbersapi.com/{number}").text
+
+        # Custom Fun Fact for Armstrong Numbers
+        if "armstrong" in properties:
+            digits = [int(d) for d in str(number)]
+            power = len(digits)
+            calculated_sum = " + ".join([f"{d}^{power}" for d in digits])
+            fun_fact = f"{number} is an Armstrong number because {calculated_sum} = {number}"
 
         # Response JSON
         return {
